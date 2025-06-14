@@ -1,5 +1,7 @@
 import express from "express"
 import dotenv, { configDotenv } from "dotenv"
+import connectDB from "./db/dbconnect.js"
+import { Router } from "express"
 
 const app = express()
 
@@ -17,7 +19,8 @@ app.get("/", (req, res) => {
     res.send("Server is ready");
 });
 
-
+console.log(`${process.env.MONGODB_URI}`)
 app.listen(5000,()=>{
     console.log(`server is listening to ${PORT}`) 
+    connectDB();
 })
