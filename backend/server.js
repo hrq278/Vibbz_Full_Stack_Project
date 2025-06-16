@@ -1,26 +1,28 @@
-import express from "express"
-import dotenv, { configDotenv } from "dotenv"
+import express, { urlencoded } from "express"
+import dotenv from "dotenv"
 import connectDB from "./db/dbconnect.js"
-import { Router } from "express"
+import authRoutes from "./routes/auth.routes.js"
 
 const app = express()
 
-configDotenv(
+dotenv.config(
     {
         path:".env"
     }
 )
 
-
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 
 const PORT = process.env.PORT || 5000
 
-app.get("/", (req, res) => {
-    res.send("Server is ready");
-});
 
-console.log(`${process.env.MONGODB_URI}`)
+app.use("/api/v1/auth", authRoutes)
+
+// console.log(`${process.env.MONGODB_URI}`)
 app.listen(5000,()=>{
     console.log(`server is listening to ${PORT}`) 
     connectDB();
 })
+
+export default app;
