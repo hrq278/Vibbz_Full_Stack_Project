@@ -1,4 +1,4 @@
-import { User } from "../models/user.models.js"
+import { User } from "../models/auth.model.js"
 import bcrypt from "bcryptjs"
 import { generateTokenAndSetCookie } from "../utils/generatetoken.js";
 
@@ -69,7 +69,7 @@ const userSignUp = async(req,res)=>{
         console.log("Signup Error", error)
         return res.status(500)
         .json({
-            error: error,
+            error: "Internal Server Error",
             message: "error in signing up new User",
             success: false
         })
@@ -115,7 +115,7 @@ const userLogin = async(req,res)=>{
      console.log("Login Error", error)
         return res.status(500)
         .json({
-            error: error,
+            error: "Internal Server Error",
             message: "error in Logging in User",
             success: false
         })
@@ -123,9 +123,42 @@ const userLogin = async(req,res)=>{
 }
 
 const userLogout = async(req,res)=>{
+    try {
+        res.cookie("jwt","", {maxAge: 0});
+        res.status(200).json({message: "LoggedOut Successfully"})
+    } catch (error) {
+         console.log("Logout Error", error)
+        return res.status(500)
+        .json({
+            error: "Internal Server Error",
+            message: "error in Logging out User",
+            success: false
+        })
+    }
 }
+
+const getMe = async(req,res)=>{
+ try {
+    const user = await User.findById(req.user._id).select("-password")
+    res.status(200)
+    .json(user)
+
+
+
+ } catch (error) {
+    console.log("Error in Getting the User", error)
+    return res.status(500)
+    .json({
+        error: "Internal Server Error",
+        message: "error in getting User",
+        success: false
+    })
+ }   
+}
+
 export{
     userLogin,
     userSignUp,
-    userLogout
+    userLogout,
+    getMe
 }
