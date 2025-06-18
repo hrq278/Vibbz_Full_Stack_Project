@@ -79,7 +79,9 @@ const userSignUp = async(req,res)=>{
 }
 
 const userLogin = async(req,res)=>{
+    
     try {
+
         const{ username, password} = req.body || {};
 
         const user = await User.findOne({username})
@@ -139,6 +141,7 @@ const userLogout = async(req,res)=>{
 
 const getMe = async(req,res)=>{
  try {
+
     const user = await User.findById(req.user._id).select("-password")
     res.status(200)
     .json(user)
