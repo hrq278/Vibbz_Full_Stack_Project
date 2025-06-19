@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
-import { User } from "../models/auth.model.js";
+import { User } from "../models/user.model.js";
 import { Post } from "../models/post.model.js";
+import { Notification } from "../models/notification.model.js";
 
 const createPost = async (req,res) => {
     try {
@@ -63,16 +64,21 @@ const likeUnlikePost = async (req,res) => {
         }
 
         const userLikedPost = post.likes.includes(userId)
-        if (!userLikedPost) {
+
+        if (userLikedPost) {
             //unlike the Post
         await Post.updateOne({_id:postId},{$pull: {likes:userId}})
+        await User.updateOne({_id:userId},{$pull: {likedPosts:postId}})
+        
 
         return res.status(200).json({message:"Post unliked Successfullly"}) 
         
         }else{
-            //unlike the Post
+            //like the Post
 
             post.likes.push(userId)
+            await User.updateOne({_id:userId},{$push: {likedPosts:postId}})
+
             await post.save();
 
             const notification = new Notification({
@@ -154,13 +160,23 @@ const deletePost = async (req,res) => {
 
 const getAllPost = async (req,res) => {
     try {
-        const posts = await Post.find().sort({createdAt: -1});
+        const posts = await Post
+        .find()
+        .sort({createdAt: -1})
+        .populate({
+            path: "user",
+            select: "-password"
+        })
+        .populate({
+            path: "comments.user",
+            select: "-password"
+        })
 
-        if (posts === 0) {
+        if (posts.length === 0) {
             return res.status(200).json([])
         }
 
-        res.status(200).status(posts)
+        res.status(200).json(posts)
 
 
     } catch (error) {
@@ -169,10 +185,41 @@ const getAllPost = async (req,res) => {
     }
 }
 
+const getLikedPost = async (req,res) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(400).json({error: "user not Found"})
+        }
+
+        const likedPosts = await Post.find({_id:{$in : user.likedPosts}})
+        .populate({
+            path: "user",
+            select: "-password"
+        })
+        .populate({
+            path: "comments.user",
+            select: "-password"
+        });
+        return res.status(200).json(likedPosts)
+
+
+
+
+    } catch (error) {
+        console.log("Error in getLikedPost : ", error.message)
+        return res.status(500).json({message:"internal server error",error: error.message})   
+         
+    }
+}
+
 export{
     createPost,
     likeUnlikePost,
     commentPost,
     deletePost,
-    getAllPost
+    getAllPost,
+    getLikedPost
 }
