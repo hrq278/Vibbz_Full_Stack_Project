@@ -10,7 +10,7 @@ const userSignUp = async(req,res)=>{
         if (!username || !email || !password || !fullName) {
         return res.status(400).json({ error: "All fields are required" });
         }
-        if (password.length > 6 ) {
+        if (password.length < 6 ) {
         return res.status(400).json({ error: "Password Must be at least 6 characters long" });
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

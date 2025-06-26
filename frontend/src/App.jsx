@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 
-
 //Pages
 import HomePage from "./pages/home/HomePage"
 import SignUpPage from "./pages/auth/signup/SignUpPage"
@@ -12,8 +11,11 @@ import ProfilePage from "./pages/profile/ProfilePage";
 //Components
 import Sidebar from "./components/common/Sidebar";
 import RightPanel from "./components/common/RightPanel";
+import { Toaster } from "react-hot-toast";
 
 function App() {
+
+
 	return (
 		<div className='flex max-w-6xl mx-auto'>
 			<Sidebar />
@@ -27,7 +29,7 @@ function App() {
 			</Routes>
 
 			<RightPanel />
-			
+			<Toaster />
 		</div>
 	);
 }
