@@ -30,7 +30,7 @@ const Post = ({ post }) => {
 			<div className='flex gap-2 items-start p-4 border-b border-gray-700'>
 				<div className='avatar'>
 					<Link to={`/profile/${postOwner.username}`} className='w-8 rounded-full overflow-hidden'>
-						<img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+						<img src={postOwner.profileImage || "/avatar-placeholder.png"} />
 					</Link>
 				</div>
 				<div className='flex flex-col flex-1'>
@@ -51,9 +51,9 @@ const Post = ({ post }) => {
 					</div>
 					<div className='flex flex-col gap-3 overflow-hidden'>
 						<span>{post.text}</span>
-						{post.img && (
+						{post.image && (
 							<img
-								src={post.img}
+								src={post.image}
 								className='h-80 object-contain rounded-lg border border-gray-700'
 								alt=''
 							/>
@@ -85,21 +85,21 @@ const Post = ({ post }) => {
 												<div className='avatar'>
 													<div className='w-8 rounded-full'>
 														<img
-															src={comment.user.profileImg || "/avatar-placeholder.png"}
+															src={comment.user?.profileImage || "/avatar-placeholder.png"}
+															alt="user"
 														/>
 													</div>
 												</div>
 												<div className='flex flex-col'>
 													<div className='flex items-center gap-1'>
-														<span className='font-bold'>{comment.user.fullName}</span>
-														<span className='text-gray-700 text-sm'>
-															@{comment.user.username}
-														</span>
+														<span className='font-bold'>{comment.user?.fullName || "Unknown"}</span>
+														<span className='text-gray-700 text-sm'>@{comment.user?.username || "unknown"}</span>
 													</div>
 													<div className='text-sm'>{comment.text}</div>
 												</div>
 											</div>
 										))}
+																				
 									</div>
 									<form
 										className='flex gap-2 items-center mt-4 border-t border-gray-600 pt-2'
