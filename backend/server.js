@@ -35,8 +35,8 @@ cloudinary.config({
 
 
 //using middleware for the parsing the data through json and form
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.json({limit : '10mb'}))
+app.use(express.urlencoded({limit : '10mb',extended: true}))
 app.use(cookieParser())
 
 //port configuration
