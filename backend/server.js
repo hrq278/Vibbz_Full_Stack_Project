@@ -48,7 +48,7 @@ const PORT = process.env.PORT || 5000
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/post", postRoutes)
-app.use("/api/v1/notification",notificationRoutes)
+app.use("/api/v1/notifications",notificationRoutes)
 
 
 // console.log(`${process.env.MONGODB_URI}`)
