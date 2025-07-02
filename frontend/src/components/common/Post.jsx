@@ -67,6 +67,43 @@ const Post = ({ post }) => {
 			toast.error(error.message || "something went wrong")
 		}
 	})
+	const {mutate:commentPost, isPending: isCommenting} = useMutation({
+		mutationFn: async () => {
+			try {
+				const res = await fetch(`/api/v1/post/comment/${post._id}`,{
+					method: "POST",
+					headers:{
+						"Content-Type" : "application/json"
+					},
+					body: JSON.stringify({ text: comment })
+				})
+	
+				const data = await res.json()
+				if (!res.ok) {
+					throw new Error(data.error || "Something went wrong")
+				}
+				return data;
+			} catch (error) {
+				throw new Error(error.message || "Something went wrong")
+			}
+		},
+		onSuccess: (data)=>{
+			  toast.success(data.message);
+				setComment("");
+
+				queryClient.setQueryData(["posts"], (oldPosts) => {
+				return oldPosts.map((p) => {
+					if (p._id === post._id) {
+					return { ...p, comments: data.comments };
+					}
+					return p;
+				});
+				});
+		},
+		onError: (error)=>{
+			toast.error(error.message)
+		}
+	})
 
 	const postOwner = post.user;
 	const isLiked = post.likes.includes(authUser._id)
@@ -75,14 +112,15 @@ const Post = ({ post }) => {
 
 	const formattedDate = "1h";
 
-	const isCommenting = false;
-
 	const handleDeletePost = () => {
 		deletePost()
 	};
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
+		if (isCommenting) return;
+		commentPost()
+
 	};
 
 	const handleLikePost = () => {
