@@ -22,7 +22,7 @@ router.get("/following", protectedRoute, getFollowingPosts)
 router.get("/user/:username", protectedRoute, getUserPost)
 
 router.post("/create", protectedRoute, createPost)
-router.post("/likeunlike/:id", protectedRoute, likeUnlikePost)
+router.post("/likes/:id", protectedRoute, likeUnlikePost)
 router.post("/comment/:id", protectedRoute, commentPost)
 
 router.delete("/delete/:id", protectedRoute, deletePost)
