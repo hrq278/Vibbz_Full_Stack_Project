@@ -1,7 +1,14 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-const FollowUnfollow = (userId)=>{
-const {mutate:follow} = useMutation({
+
+
+const useFollowUnfollow = () => {
+
+
+    const queryClient = useQueryClient()
+
+
+    const { mutate:follow, isPending } = useMutation({
     mutationFn:async (userId) => {
         try {
             const res = await fetch(`/api/v1/user/follow/${userId}`,{
@@ -18,11 +25,18 @@ const {mutate:follow} = useMutation({
         }
     },
     onSuccess: (data)=>{
-        toast.success(data.message)
+        Promise.all([
+        queryClient.invalidateQueries({queryKey: ["suggestedUser"]}),
+        queryClient.invalidateQueries({queryKey: ["authUser"]})    
+        ])
+        
     },
     onError:(error)=>{
         toast.error(error.message)
     }
 })
+
+return { follow, isPending }
 }
-export default FollowUnfollow
+
+export default useFollowUnfollow;
