@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 
 
-const useFollowUnfollow = () => {
+const useFollowUnFollow = () => {
 
 
     const queryClient = useQueryClient()
@@ -39,4 +39,4 @@ const useFollowUnfollow = () => {
 return { follow, isPending }
 }
 
-export default useFollowUnfollow;
+export default useFollowUnFollow;

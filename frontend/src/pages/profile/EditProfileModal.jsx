@@ -1,20 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
-const EditProfileModal = () => {
+const EditProfileModal = ({authUser}) => {
 	const [formData, setFormData] = useState({
 		fullName: "",
-		username: "",
-		email: "",
 		bio: "",
 		link: "",
 		newPassword: "",
 		currentPassword: "",
 	});
 
+	const {isUpdating, updateProfile} = useUpdateUserProfile()
+
 	const handleInputChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+	useEffect( () => {
+		if (authUser) {
+			setFormData({
+			fullName: authUser.fullName,
+			bio: authUser.bio,
+			link: authUser.link,
+			currentPassword: "",
+			newPassword: "",
+			})
+		}
+	},[authUser])
 	return (
 		<>
 			<button
@@ -30,7 +42,7 @@ const EditProfileModal = () => {
 						className='flex flex-col gap-4'
 						onSubmit={(e) => {
 							e.preventDefault();
-							alert("Profile updated successfully");
+							updateProfile(formData)
 						}}
 					>
 						<div className='flex flex-wrap gap-2'>
@@ -42,24 +54,7 @@ const EditProfileModal = () => {
 								name='fullName'
 								onChange={handleInputChange}
 							/>
-							<input
-								type='text'
-								placeholder='Username'
-								className='flex-1 input border border-gray-700 rounded p-2 input-md'
-								value={formData.username}
-								name='username'
-								onChange={handleInputChange}
-							/>
-						</div>
-						<div className='flex flex-wrap gap-2'>
-							<input
-								type='email'
-								placeholder='Email'
-								className='flex-1 input border border-gray-700 rounded p-2 input-md'
-								value={formData.email}
-								name='email'
-								onChange={handleInputChange}
-							/>
+							
 							<textarea
 								placeholder='Bio'
 								className='flex-1 input border border-gray-700 rounded p-2 input-md'
@@ -94,7 +89,9 @@ const EditProfileModal = () => {
 							name='link'
 							onChange={handleInputChange}
 						/>
-						<button className='btn btn-primary rounded-full btn-sm text-white'>Update</button>
+						<button className='btn btn-primary rounded-full btn-sm text-white'>
+							{isUpdating ? "Updating..." : "Update"}
+							</button>
 					</form>
 				</div>
 				<form method='dialog' className='modal-backdrop'>
