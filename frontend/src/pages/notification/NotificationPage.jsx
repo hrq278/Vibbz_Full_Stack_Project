@@ -17,7 +17,7 @@ const NotificationPage = () => {
 		queryKey:["notifications"],
 		queryFn: async () => {
 			try {
-				const res = await fetch("api/v1/notifications/")
+				const res = await fetch("api/v1/notifications/all")
 				const data = await res.json()
 				if (!res.ok) {
 					throw new Error(data.error || "Something went wrong")
@@ -32,7 +32,7 @@ const NotificationPage = () => {
 	const {mutate:deleteNotifications, isPending } = useMutation({
 		mutationFn: async () => {
 			try {
-				const res = await fetch("api/v1/notifications/",{
+				const res = await fetch("api/v1/notifications/delete",{
 					method: "DELETE"
 				});
 				const data = await res.json()

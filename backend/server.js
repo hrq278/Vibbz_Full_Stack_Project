@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 import cors from "cors"
+import path from "path"
 
 import {v2 as cloudinary} from "cloudinary"
 
@@ -15,7 +16,8 @@ import postRoutes from "./routes/post.route.js"
 import notificationRoutes from "./routes/notification.route.js"
 
 const app = express()
-
+const PORT = process.env.PORT || 5000
+const __dirname = path.resolve() 
 
 //cors 
 app.use(cors())
@@ -41,7 +43,6 @@ app.use(cookieParser())
 
 //port configuration
 
-const PORT = process.env.PORT || 5000
 
 
 //Api Routes defined
@@ -50,6 +51,16 @@ app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/post", postRoutes)
 app.use("/api/v1/notifications",notificationRoutes)
 
+
+//for production 
+if (process.env.NODE_ENV.trim() === "production") {
+    app.use(express.static(path.join(__dirname,"../frontend/dist")))
+
+    app.get("*",(req,res) => {
+    res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"))
+})
+
+}
 
 // console.log(`${process.env.MONGODB_URI}`)
 
@@ -60,14 +71,3 @@ app.listen(5000,()=>{
 
 export default app;
 
-
-//dependencies used for this project for my MERN project's backend
-//  "bcryptjs": "^3.0.2",
-//     "cloudinary": "^2.6.1",
-//     "cookie-parser": "^1.4.7",
-//     "cors": "^2.8.5",
-//     "dotenv": "^16.5.0",
-//     "express": "^5.1.0",
-//     "jsonwebtoken": "^9.0.2",
-//     "mongodb": "^6.17.0",
-//     "mongoose": "^8.15.1
